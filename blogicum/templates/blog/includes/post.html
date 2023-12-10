@@ -1,16 +1,23 @@
 {% if truncating_text %}
-<article>
-  <ul>
-    <li>
-      Место: {{ post.location }}
-    </li>
-    <li>
-      Дата: {{ post.date }}
-    </li>
-    <li>
-      Категория: <a href="{% url 'blog:category_posts' post.category %}">{{ post.category }}</a>
-    </li>
-  </ul>
-    {{ post.text|linebreaksbr }}
-</article>
+  <article>
+    <ul>
+      <li>
+        Место: {{ post.location }}
+      </li>
+      <li>
+        Дата: {{ post.date }}
+      </li>
+      <li>
+        Категория: <a href="{% url 'blog:category_posts' post.category %}">{{ post.category }}</a>
+      </li>
+    </ul>
+    {% with request.resolver_match.view_name as view_name %}
+      {% if view_name == 'blog:index' %}
+        {{ post.text|truncatewords:10|linebreaksbr }}
+        <p><a href="{% url 'blog:post_detail' post.id %}">Читать полный текст</a></p>
+      {% elif view_name == 'blog:post_detail' %}
+        {{ post.text|linebreaksbr }}
+      {% endif %}
+    {% endwith %}
+  </article>
 {% endif %}
